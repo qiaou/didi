@@ -9,6 +9,7 @@
         <link href="static/assets/styles.css" rel="stylesheet" media="screen">
         <link href="static/assets/DT_bootstrap.css" rel="stylesheet" media="screen">
         <link href="//cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css" rel="stylesheet" media="screen">
+        <link href="static/bootstrap/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
         <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="vendors/flot/excanvas.min.js"></script><![endif]-->
         <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
         <!--[if lt IE 9]>
@@ -21,6 +22,9 @@
 
           .dataTables_length {
             margin-top:10px
+          }
+          .date_format {
+            width:200px
           }
         </style>
         <script src="static/vendors/modernizr-2.6.2-respond-1.1.0.min.js"></script>
@@ -56,10 +60,19 @@
                 <div class="span12" id="content">
                   <div class="row-fluid">
                     <div class="span4">
-                      开始时间：<input type="text" id="startTime">
+                      开始时间：
+
+                      <div class="input-append date form_datetime">
+                          <input size="16" type="text" value="" id="startTime">
+                      </div>
+
                     </div>
                     <div class="span4">
-                      结束时间: <input type="text" id="endTime">
+                      结束时间:
+
+                      <div class="input-append date form_datetime">
+                          <input size="16" type="text" value="" id="endTime">
+                      </div>
                     </div>
                   </div>
                   <div class="row-fluid">
@@ -102,6 +115,7 @@
         <script src="static/vendors/jquery-1.9.1.js"></script>
         <script src="static/bootstrap/js/bootstrap.min.js"></script>
         <script src="//cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
+<script src="static/bootstrap/js/bootstrap-datetimepicker.js"></script>
         <script>
         $(function() {
           table = $('#searchTable').DataTable( {
@@ -113,6 +127,17 @@
               paging: true,
               searching : false
              } );
+
+             $("#startTime").datetimepicker({
+                autoclose: true,
+                todayBtn: true,
+                pickerPosition: "bottom-left"
+            });
+            $("#endTime").datetimepicker({
+                  autoclose: true,
+                  todayBtn: true,
+                  pickerPosition: "bottom-left"
+              });
         });
 
         function buildSearchData() {
