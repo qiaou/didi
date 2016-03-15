@@ -9,7 +9,8 @@
         <link href="static/assets/styles.css" rel="stylesheet" media="screen">
         <link href="static/assets/DT_bootstrap.css" rel="stylesheet" media="screen">
         <link href="//cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css" rel="stylesheet" media="screen">
-        <link href="static/bootstrap/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+        <!-- <link href="static/bootstrap/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen"> -->
+        <link href="static/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
         <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="vendors/flot/excanvas.min.js"></script><![endif]-->
         <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
         <!--[if lt IE 9]>
@@ -63,7 +64,13 @@
                       开始时间：
 
                       <div class="input-append date form_datetime">
-                          <input size="16" type="text" value="" id="startTime">
+                        <div id="startTimePicker" class="input-append">
+                          <input data-format="yyyy-MM-dd hh:mm:ss" type="text" id="startTime"></input>
+                          <span class="add-on">
+                            <i data-time-icon="icon-time" data-date-icon="icon-calendar">
+                            </i>
+                          </span>
+                        </div>
                       </div>
 
                     </div>
@@ -71,7 +78,13 @@
                       结束时间:
 
                       <div class="input-append date form_datetime">
-                          <input size="16" type="text" value="" id="endTime">
+                        <div id="endTimePicker" class="input-append">
+                          <input data-format="yyyy-MM-dd hh:mm:ss" type="text" id="endTime"></input>
+                          <span class="add-on">
+                            <i data-time-icon="icon-time" data-date-icon="icon-calendar">
+                            </i>
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -141,7 +154,8 @@
         <script src="static/vendors/jquery-1.9.1.js"></script>
         <script src="static/bootstrap/js/bootstrap.min.js"></script>
         <script src="//cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
-<script src="static/bootstrap/js/bootstrap-datetimepicker.js"></script>
+        <!-- <script src="static/bootstrap/js/bootstrap-datetimepicker.js"></script> -->
+        <script src="static/js/bootstrap-datetimepicker.min.js"></script>
         <script>
         $(function() {
           table = $('#searchTable').DataTable( {
@@ -154,12 +168,10 @@
               searching : false
              } );
 
-             $("#startTime").datetimepicker({
-                autoclose: true,
-                todayBtn: true,
-                pickerPosition: "bottom-left"
+            $("#startTimePicker").datetimepicker({
+              language: 'pt-BR'
             });
-            $("#endTime").datetimepicker({
+            $("#endTimePicker").datetimepicker({
                   autoclose: true,
                   todayBtn: true,
                   pickerPosition: "bottom-left"
@@ -171,9 +183,7 @@
                 var body = buildObject(header,content)
                 $("#detailMsgTable").html("")
                 for(var key in body) {
-                  console.log(key,body[key])
                   var tr = $("<tr height='50px'><td style='text-align:center;width:100px'>"+key+"</td><td style='text-align:left;width:400px'>"+body[key]+"</td></tr>")
-                  console.log(tr)
                   $("#detailMsgTable").append(tr)
                 }
                 $('#myModal').modal('show')
