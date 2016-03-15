@@ -2,7 +2,7 @@
 <html>
 
     <head>
-        <title>不知道神马系统</title>
+        <title>Disou Systemm</title>
         <!-- Bootstrap -->
         <link href="static/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
         <link href="static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
@@ -90,10 +90,10 @@
                   </div>
                   <div class="row-fluid">
                     <div class="span4">
-                      司机电话：<input type="text" id="driverMobile">
+                      司机ID：<input type="text" id="driverid">
                     </div>
                     <div class="span4">
-                      乘客电话: <input type="text" id="passMobile">
+                      乘客ID: <input type="text" id="passengerid">
                     </div>
                     <div class="span4">
                       <input type="button" value="查询" onclick="query()"/>
@@ -107,11 +107,12 @@
                   <table id="searchTable" class="display" cellspacing="0" width="100%">
                       <thead>
                           <tr>
-                              <th>Name</th>
-                              <th>Position</th>
-                              <th>Office</th>
-                              <th>Extn.</th>
-                              <th style="width:250px">Start date</th>
+                              <th>时间</th>
+                              <th>事件</th>
+                              <th>城市</th>
+                              <th>订单ID</th>
+                              <th>司机ID</th>
+                              <th style="width:250px">详细信息</th>
                           </tr>
                       </thead>
                     </table>
@@ -120,7 +121,7 @@
           </div>
             <hr>
             <footer>
-                <p>&copy; 滴滴出行</p>
+                <p>&copy;gy</p>
             </footer>
         </div>
         <!--/.fluid-container-->
@@ -215,8 +216,8 @@
           return {
             'startTime' : $("#startTime").val(),
             'endTime' :   $("#endTime").val(),
-            'passMobile' : $("#passMobile").val(),
-            'driverMobile' : $("#driverMobile").val()
+            'passengerid' : $("#passengerid").val(),
+            'driverid' : $("#driverid").val()
           }
         }
 
@@ -231,8 +232,8 @@
             return false
           }
 
-          if(!$("#passMobile").val() && !$("#driverMobile").val() ) {
-            alert("司机号码和乘客号码不能同时为空")
+          if(!$("#passengerid").val() && !$("#driverid").val() ) {
+            alert("司机ID和乘客ID不能同时为空")
             return false
           }
 
