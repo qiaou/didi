@@ -98,7 +98,7 @@
                               <th>Position</th>
                               <th>Office</th>
                               <th>Extn.</th>
-                              <th>Start date</th>
+                              <th style="width:250px">Start date</th>
                           </tr>
                       </thead>
                     </table>
@@ -112,6 +112,32 @@
         </div>
         <!--/.fluid-container-->
 
+        <!-- 模态框（Modal） -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+           aria-labelledby="myModalLabel" aria-hidden="true">
+           <div class="modal-dialog">
+              <div class="modal-content">
+                 <div class="modal-header">
+                    <button type="button" class="close"
+                       data-dismiss="modal" aria-hidden="true">
+                          &times;
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                       详细信息
+                    </h4>
+                 </div>
+                 <div class="modal-body">
+                    <table id="detailMsgTable">
+
+                    </table>
+                 </div>
+                 <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                       data-dismiss="modal">关闭
+                    </button>
+                </div>
+              </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
         <script src="static/vendors/jquery-1.9.1.js"></script>
         <script src="static/bootstrap/js/bootstrap.min.js"></script>
         <script src="//cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
@@ -138,7 +164,42 @@
                   todayBtn: true,
                   pickerPosition: "bottom-left"
               });
+              $("#searchTable").click(function(e){
+                var parent = $(e.target).parent()
+                var header =  getHeader()
+                var content = getContent(parent)
+                var body = buildObject(header,content)
+                $("#detailMsgTable").html("")
+                for(var key in body) {
+                  console.log(key,body[key])
+                  var tr = $("<tr height='50px'><td style='text-align:center;width:100px'>"+key+"</td><td style='text-align:left;width:400px'>"+body[key]+"</td></tr>")
+                  console.log(tr)
+                  $("#detailMsgTable").append(tr)
+                }
+                $('#myModal').modal('show')
+              })
         });
+
+
+        function getHeader() {
+          var header = [];
+          $("#searchTable th").each(function(i,m){header.push($(m).html())})
+          return header
+        }
+        function getContent(target) {
+          var header = [];
+          $("td",target).each(function(i,m){header.push($(m).html())})
+          return header
+        }
+
+        function buildObject(header,content) {
+          var result = {};
+          for(var i = 0 ;i < header.length; i++) {
+            result[header[i]] = content[i]
+          }
+
+          return result;
+        }
 
         function buildSearchData() {
           return {
