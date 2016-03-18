@@ -17,6 +17,7 @@
             <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
         <style>
+        @import url('https://rawgithub.com/ashleydw/typeahead.js-bootstrap.css/master/typeahead.js-bootstrap.css');
           table tbody td {
             text-align: center;
           }
@@ -26,6 +27,22 @@
           }
           .date_format {
             width:200px
+          }
+          .twitter-typeahead {
+            width:inherit;
+            height: 30px;
+          }
+          .span4 .tt-hint {
+            height: 20px
+          }
+
+          #cityCode {
+            height: 20px
+          }
+
+          .span12 .row-fluid label{
+              width: 70px;
+              display: inline-block;
           }
         </style>
         <script src="static/vendors/modernizr-2.6.2-respond-1.1.0.min.js"></script>
@@ -61,7 +78,7 @@
                 <div class="span12" id="content">
                   <div class="row-fluid">
                     <div class="span4">
-                      开始时间：
+                      <label for="startTime">开始时间：</label>
 
                       <div class="input-append date form_datetime">
                         <div id="startTimePicker" class="input-append">
@@ -75,8 +92,7 @@
 
                     </div>
                     <div class="span4">
-                      结束时间:
-
+                      <label for="endTime">结束时间</label>
                       <div class="input-append date form_datetime">
                         <div id="endTimePicker" class="input-append">
                           <input data-format="yyyy-MM-dd hh:mm:ss" type="text" id="endTime"></input>
@@ -87,20 +103,26 @@
                         </div>
                       </div>
                     </div>
+                    <div class="span4">
+                      <label for="cityCode">城市：</label>
+                      <input name="cityCode" type="text" id="cityCode"  />
+                    </div>
                   </div>
                   <div class="row-fluid">
                     <div class="span4">
-                      司机ID：<input type="text" id="driverid">
+                        <label for="driverid">司机ID：</label> <input type="text" id="driverid">
                     </div>
                     <div class="span4">
-                      乘客ID: <input type="text" id="passengerid">
+                      <label for="passengerid">乘客ID: </label><input type="text" id="passengerid">
                     </div>
                     <div class="span4">
                       <input type="button" value="查询" onclick="query()"/>
+                      <input type="button" value="查询signIn事件" onclick="querySignIn()"/>
+                      <input type="hidden" id="orderId" />
                     </div>
                   </div>
 
-                  <div class="block">
+                  <div class="block" id="searchTableBlock">
                     <div class="navbar navbar-inner block-header">
                                 <div class="muted pull-left">查询结果</div>
                             </div>
@@ -112,11 +134,48 @@
                               <th>城市</th>
                               <th>订单ID</th>
                               <th>司机ID</th>
-                              <th style="width:250px">详细信息</th>
+                              <th style="width:250px;overflow:hidden;text-overflow:clip;">详细信息</th>
                           </tr>
                       </thead>
                     </table>
                 </div>
+                <div class="block" id="tableWithOrderIdBlock" style="display:none">
+                  <div class="navbar navbar-inner block-header">
+                              <div class="muted pull-left">OrderId查询结果</div>
+                              <div class="muted pull-left" style="float:right"><a href="#" onclick='goBackSearchTable("tableWithOrderIdBlock")'>返回</a></div>
+                          </div>
+                  <table id="tableWithOrderId" class="display" cellspacing="0" width="100%" >
+                    <thead>
+                        <tr>
+                            <th>时间</th>
+                            <th>事件</th>
+                            <th>城市</th>
+                            <th>订单ID</th>
+                            <th>司机ID-2</th>
+                            <th style="width:250px;overflow:hidden;text-overflow:clip;">详细信息</th>
+                        </tr>
+                    </thead>
+                  </table>
+                </div>
+                <div class="block" id="tableWithSignInBlock" style="display:none">
+                  <div class="navbar navbar-inner block-header">
+                              <div class="muted pull-left">SignIn事件查询</div>
+                              <div class="muted pull-left" style="float:right"><a href="#" onclick='goBackSearchTable("tableWithSignInBlock")'>返回</a></div>
+                          </div>
+                  <table id="tableWithSignIn" class="display" cellspacing="0" width="100%" >
+                    <thead>
+                        <tr>
+                            <th>时间</th>
+                            <th>事件</th>
+                            <th>城市</th>
+                            <th>订单ID</th>
+                            <th>司机ID-2</th>
+                            <th style="width:250px;overflow:hidden;text-overflow:clip;">详细信息</th>
+                        </tr>
+                    </thead>
+                  </table>
+                </div>
+              </div>
             </div>
           </div>
             <hr>
@@ -157,18 +216,46 @@
         <script src="//cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
         <!-- <script src="static/bootstrap/js/bootstrap-datetimepicker.js"></script> -->
         <script src="static/js/bootstrap-datetimepicker.min.js"></script>
+        <script src="https://rawgit.com/zeMirco/typeahead.js/master/dist/typeahead.min.js"></script>
         <script>
         $(function() {
-          table = $('#searchTable').DataTable( {
-            "ajax": {
-                  "url": '/search',
-                  "type": 'get',
-                  "data": buildSearchData
-              },
-              paging: true,
-              searching : false
-             } );
 
+            $('#cityCode').typeahead(
+            {
+              name: 'my-dataset',
+              local: ['Aaaa', 'Abbb', 'Accc']
+            });
+
+            table = $('#searchTable').DataTable( {
+              "ajax": {
+                    "url": '/search',
+                    "type": 'get',
+                    "data": buildSearchData
+                },
+                paging: true,
+                searching : false
+               } );
+
+
+             tableWithOrderId = $('#tableWithOrderId').DataTable( {
+               "ajax": {
+                     "url": '/search',
+                     "type": 'get',
+                     "data": buildSearchDataWithOrderId
+                 },
+                 paging: true,
+                 searching : false
+                } )
+
+                tableWithSignIn = $('#tableWithSignIn').DataTable( {
+                  "ajax": {
+                        "url": '/search',
+                        "type": 'get',
+                        "data": buildSearchDataWithSignIn
+                    },
+                    paging: true,
+                    searching : false
+                   } )
             $("#startTimePicker").datetimepicker({
               language: 'pt-BR'
             });
@@ -178,6 +265,13 @@
                   pickerPosition: "bottom-left"
               });
               $("#searchTable").click(function(e){
+                if($(e.target).prop("tagName") == 'A') {
+                  var orderId = $(e.target).html();
+                  $("#orderId").val(orderId);
+                  $("#searchTableBlock").fadeOut();
+                  $("#tableWithOrderIdBlock").fadeIn();
+                  return;
+                }
                 var parent = $(e.target).parent()
                 var header =  getHeader()
                 var content = getContent(parent)
@@ -217,10 +311,28 @@
             'startTime' : $("#startTime").val(),
             'endTime' :   $("#endTime").val(),
             'passengerid' : $("#passengerid").val(),
-            'driverid' : $("#driverid").val()
+            'driverid' : $("#driverid").val(),
+            'signIn' : false
           }
         }
 
+        function buildSearchDataWithOrderId() {
+          var result = buildSearchData()
+          result['orderId'] = $("#orderId").val()
+          return result
+        }
+
+        function buildSearchDataWithSignIn() {
+          var result = buildSearchData()
+          result['signIn'] = true
+          return result
+        }
+
+        function goBackSearchTable(id) {
+
+          $("#"+id).fadeOut()
+          $("#searchTableBlock").fadeIn()
+        }
         function validate() {
           if(!$("#startTime").val()) {
             alert("起始时间不能为空")
@@ -241,7 +353,21 @@
         }
         function query() {
           if(validate())
+
+            toggleBetweenTable("tableWithSignInBlock","searchTableBlock");
             table.ajax.reload()
+        }
+
+        function querySignIn() {
+          if(validate()) {
+            toggleBetweenTable("searchTableBlock","tableWithSignInBlock");
+            tableWithSignIn.ajax.reload();
+          }
+        }
+
+        function toggleBetweenTable(fadeOutId,fadeInId) {
+          $("#"+fadeOutId).fadeOut();
+          $("#"+fadeInId).fadeIn();
         }
         </script>
     </body>
