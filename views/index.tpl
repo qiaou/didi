@@ -131,7 +131,8 @@
 
                   <div class="block" id="searchTableBlock">
                     <div class="navbar navbar-inner block-header">
-                                <div class="muted pull-left">查询结果</div>
+                                <div class="muted pull-left">订单概要</div>
+                                <div class="muted pull-left" style="float:right"><a href="#" onclick='goBackSearchTable("searchTableBlock","searchTableWithOrderIdBlock")'>返回</a></div>
                             </div>
                   <table id="searchTable" class="display" cellspacing="0" width="100%">
                       <thead>
@@ -146,10 +147,30 @@
                       </thead>
                     </table>
                 </div>
+
+                <div class="block" id="searchTableWithOrderIdBlock" style="display:none">
+                  <div class="navbar navbar-inner block-header">
+                      <div class="muted pull-left">订单事件</div>
+                        <div class="muted pull-left" style="float:right"><a href="#" onclick='goBackSearchTable("searchTableWithOrderIdBlock","searchTableBlock")'>返回</a></div>
+                  </div>
+                  <table id="searchTableWithOrderId" class="display" cellspacing="0" width="100%">
+                      <thead>
+                          <tr>
+                              <th>时间</th>
+                              <th>事件</th>
+                              <th>城市</th>
+                              <th>订单ID</th>
+                              <th>司机ID</th>
+                              <th style="width:250px;overflow:hidden;text-overflow:clip;">详细信息</th>
+                          </tr>
+                      </thead>
+                  </table>
+              </div>
+
                 <div class="block" id="tableWithOrderIdBlock" style="display:none">
                   <div class="navbar navbar-inner block-header">
-                              <div class="muted pull-left">OrderId查询结果</div>
-                              <div class="muted pull-left" style="float:right"><a href="#" onclick='goBackSearchTable("tableWithOrderIdBlock")'>返回</a></div>
+                              <div class="muted pull-left">主流程事件查询结果</div>
+                              <div class="muted pull-left" style="float:right"><a href="#" onclick='goBackSearchTable("tableWithOrderIdBlock","tableWithSignInBlock")'>返回</a></div>
                           </div>
                   <table id="tableWithOrderId" class="display" cellspacing="0" width="100%" >
                     <thead>
@@ -167,7 +188,7 @@
                 <div class="block" id="tableWithSignInBlock" style="display:none">
                   <div class="navbar navbar-inner block-header">
                               <div class="muted pull-left">SignIn事件查询</div>
-                              <div class="muted pull-left" style="float:right"><a href="#" onclick='goBackSearchTable("tableWithSignInBlock")'>返回</a></div>
+                              <div class="muted pull-left" style="float:right"><a href="#" onclick='goBackSearchTable("tableWithSignInBlock","tableWithOrderIdBlock")'>返回</a></div>
                           </div>
                   <table id="tableWithSignIn" class="display" cellspacing="0" width="100%" >
                     <thead>
@@ -254,7 +275,7 @@
                  searching : false
                 } )
 
-                tableWithSignIn = $('#tableWithSignIn').DataTable( {
+            tableWithSignIn = $('#tableWithSignIn').DataTable( {
                   "ajax": {
                         "url": '/search',
                         "type": 'get',
@@ -262,7 +283,17 @@
                     },
                     paging: true,
                     searching : false
-                   } )
+                } )
+
+            searchTableWithOrderId = $("#searchTableWithOrderId").DataTable( {
+                  "ajax": {
+                        "url": '/search',
+                        "type": 'get',
+                        "data": buildSearchDataWithOrderId
+                    },
+                    paging: true,
+                    searching : false
+                } )
             $("#startTimePicker").datetimepicker({
               language: 'pt-BR'
             });
@@ -277,7 +308,7 @@
                   tableWithOrderId.ajax.reload();
                   $("#orderId").val(orderId);
                   $("#searchTableBlock").fadeOut();
-                  $("#tableWithOrderIdBlock").fadeIn();
+                  $("#searchTableWithOrderIdBlock").fadeIn();
                   return;
                 }
                 var parent = $(e.target).parent()
@@ -336,10 +367,10 @@
           return result
         }
 
-        function goBackSearchTable(id) {
+        function goBackSearchTable(id,fadeInId) {
 
           $("#"+id).fadeOut()
-          $("#searchTableBlock").fadeIn()
+          $("#"+fadeInId).fadeIn()
         }
         function validate() {
           if(!$("#startTime").val()) {
@@ -375,6 +406,10 @@
 
         function querySignIn() {
           if(validate()) {
+            if(!$("#driverMobile").val() && !$("#driverid").val()){
+              alert("必须通过SigIn查询必须需要司机手机或者司机ID")
+              return
+            }
             toggleBetweenTable("tableWithOrderIdBlock","tableWithSignInBlock");
             toggleBetweenTable("searchTableBlock","tableWithSignInBlock");
             tableWithSignIn.ajax.reload();
