@@ -105,7 +105,15 @@
                     </div>
                     <div class="span4">
                       <label for="cityCode">城市：</label>
-                      <input name="cityCode" type="text" id="cityCode"  />
+                      <input name="cityCode" type="text" id="cityCode"  autocomplete="off"/>
+                    </div>
+                  </div>
+                  <div class="row-fluid">
+                    <div class="span4">
+                        <label for="driverMobile">司机手机：</label> <input type="text" id="driverMobile">
+                    </div>
+                    <div class="span4">
+                      <label for="passengerMobile">乘客手机: </label><input type="text" id="passengerMobile">
                     </div>
                   </div>
                   <div class="row-fluid">
@@ -113,12 +121,11 @@
                         <label for="driverid">司机ID：</label> <input type="text" id="driverid">
                     </div>
                     <div class="span4">
-                      <label for="passengerid">乘客ID: </label><input type="text" id="passengerid">
+                      <label for="orderId">订单ID: </label><input type="text" id="orderId">
                     </div>
                     <div class="span4">
                       <input type="button" value="查询" onclick="query()"/>
                       <input type="button" value="查询signIn事件" onclick="querySignIn()"/>
-                      <input type="hidden" id="orderId" />
                     </div>
                   </div>
 
@@ -267,6 +274,7 @@
               $("#searchTable").click(function(e){
                 if($(e.target).prop("tagName") == 'A') {
                   var orderId = $(e.target).html();
+                  tableWithOrderId.ajax.reload();
                   $("#orderId").val(orderId);
                   $("#searchTableBlock").fadeOut();
                   $("#tableWithOrderIdBlock").fadeIn();
@@ -310,9 +318,9 @@
           return {
             'startTime' : $("#startTime").val(),
             'endTime' :   $("#endTime").val(),
-            'passengerid' : $("#passengerid").val(),
+            'passengerMobile' : $("#passengerMobile").val(),
             'driverid' : $("#driverid").val(),
-            'signIn' : false
+            'signIn' : 0
           }
         }
 
@@ -324,7 +332,7 @@
 
         function buildSearchDataWithSignIn() {
           var result = buildSearchData()
-          result['signIn'] = true
+          result['signIn'] = 1
           return result
         }
 
@@ -344,22 +352,30 @@
             return false
           }
 
-          if(!$("#passengerid").val() && !$("#driverid").val() ) {
-            alert("司机ID和乘客ID不能同时为空")
+          if(!$("#passengerMobile").val() && !$("#driverid").val() &&!$("#orderId").val() && !$("#driverMobile").val()) {
+            alert("司机ID,乘客ID,司机手,订单ID不能同时为空")
             return false
           }
 
           return true
         }
         function query() {
-          if(validate())
-
-            toggleBetweenTable("tableWithSignInBlock","searchTableBlock");
-            table.ajax.reload()
+          if(validate()){
+            if(!!$("#passengerMobile").val() || !!$("#orderId").val()) {
+              toggleBetweenTable("tableWithSignInBlock","searchTableBlock");
+              toggleBetweenTable("tableWithOrderIdBlock","searchTableBlock");
+              table.ajax.reload()
+            } else if(!!$("#driverid").val() || !!$("#driverMobile").val() ) {
+              toggleBetweenTable("searchTableBlock","tableWithOrderIdBlock");
+              toggleBetweenTable("tableWithSignInBlock","tableWithOrderIdBlock");
+              tableWithOrderId.ajax.reload()
+            }
+          }
         }
 
         function querySignIn() {
           if(validate()) {
+            toggleBetweenTable("tableWithOrderIdBlock","tableWithSignInBlock");
             toggleBetweenTable("searchTableBlock","tableWithSignInBlock");
             tableWithSignIn.ajax.reload();
           }
