@@ -264,8 +264,7 @@
                 searching : false
                } );
 
-
-             tableWithOrderId = $('#tableWithOrderId').DataTable( {
+            tableWithOrderId = $('#tableWithOrderId').DataTable( {
                "ajax": {
                      "url": '/search',
                      "type": 'get',
@@ -289,7 +288,7 @@
                   "ajax": {
                         "url": '/search',
                         "type": 'get',
-                        "data": buildSearchDataWithOrderId
+                        "data": buildSearchDataWithOrderIdRedirect
                     },
                     paging: true,
                     searching : false
@@ -305,7 +304,7 @@
               $("#searchTable").click(function(e){
                 if($(e.target).prop("tagName") == 'A') {
                   var orderId = $(e.target).html();
-                  tableWithOrderId.ajax.reload();
+                  searchTableWithOrderId.ajax.reload();
                   $("#orderId").val(orderId);
                   $("#searchTableBlock").fadeOut();
                   $("#searchTableWithOrderIdBlock").fadeIn();
@@ -358,6 +357,13 @@
         function buildSearchDataWithOrderId() {
           var result = buildSearchData()
           result['orderId'] = $("#orderId").val()
+          return result
+        }
+
+        function buildSearchDataWithOrderIdRedirect() {
+          var result = buildSearchData()
+          result['orderId'] = $("#orderId").val()
+          result['isRedirect'] = 1
           return result
         }
 
